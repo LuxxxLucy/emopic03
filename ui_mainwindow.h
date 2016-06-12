@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.6.0
+** Created by: Qt User Interface Compiler version 5.5.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -34,6 +34,9 @@ public:
     QPushButton *font_select;
     QPushButton *draw_line_button;
     QPushButton *addtextbutton;
+    QPushButton *draw_polygon_button;
+    QPushButton *draw_ellipse_button;
+    QPushButton *draw_rectangle_button;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -42,6 +45,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
+        MainWindow->setEnabled(true);
         MainWindow->resize(656, 502);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
@@ -65,7 +69,16 @@ public:
         draw_line_button->setGeometry(QRect(500, 260, 113, 32));
         addtextbutton = new QPushButton(centralWidget);
         addtextbutton->setObjectName(QStringLiteral("addtextbutton"));
-        addtextbutton->setGeometry(QRect(500, 290, 113, 32));
+        addtextbutton->setGeometry(QRect(500, 410, 113, 32));
+        draw_polygon_button = new QPushButton(centralWidget);
+        draw_polygon_button->setObjectName(QStringLiteral("draw_polygon_button"));
+        draw_polygon_button->setGeometry(QRect(500, 300, 113, 32));
+        draw_ellipse_button = new QPushButton(centralWidget);
+        draw_ellipse_button->setObjectName(QStringLiteral("draw_ellipse_button"));
+        draw_ellipse_button->setGeometry(QRect(500, 340, 113, 32));
+        draw_rectangle_button = new QPushButton(centralWidget);
+        draw_rectangle_button->setObjectName(QStringLiteral("draw_rectangle_button"));
+        draw_rectangle_button->setGeometry(QRect(500, 370, 113, 32));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -79,6 +92,9 @@ public:
         MainWindow->setStatusBar(statusBar);
 
         retranslateUi(MainWindow);
+        QObject::connect(draw_polygon_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
+        QObject::connect(draw_ellipse_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
+        QObject::connect(draw_rectangle_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -93,6 +109,9 @@ public:
         font_select->setText(QApplication::translate("MainWindow", "select font", 0));
         draw_line_button->setText(QApplication::translate("MainWindow", "draw one line", 0));
         addtextbutton->setText(QApplication::translate("MainWindow", "add text", 0));
+        draw_polygon_button->setText(QApplication::translate("MainWindow", "draw triangle", 0));
+        draw_ellipse_button->setText(QApplication::translate("MainWindow", "draw ellipse", 0));
+        draw_rectangle_button->setText(QApplication::translate("MainWindow", "draw rectangle", 0));
     } // retranslateUi
 
 };

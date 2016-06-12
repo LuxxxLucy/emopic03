@@ -5,6 +5,9 @@
 
 #define PAINT_LINE 1
 #define PAINT_TEXT 2
+#define PAINT_POLYGON 3
+#define PAINT_ELLIPSE 4
+#define PAINT_RECTANGLE 5
 
 class QTime;
 namespace Ui {
@@ -27,12 +30,14 @@ private:
     void paint_save(QString s);
 
     int state;
+    int state1;
 
-    QPointF first_point,second_point;
+    QPointF first_point,second_point,third_point;
 protected:
     void paintEvent(QPaintEvent * event);
     void mousePressEvent(QMouseEvent * event);
     void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 private slots:
     void on_open_image_dialog_clicked();
     void on_save_clicked();
@@ -41,6 +46,9 @@ private slots:
     void on_font_select_clicked();
     void on_draw_line_button_clicked();
     void on_addtextbutton_clicked();
+    void on_draw_polygon_button_clicked();
+    void on_draw_ellipse_button_clicked();
+    void on_draw_rectangle_button_clicked();
 };
 
 #endif // MAINWINDOW_H
