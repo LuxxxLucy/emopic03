@@ -24,6 +24,7 @@ int point_size;
 QPointF Tri[3];
 QPen pen;
 bool isDrawing;
+bool firstLoad;
 QImage Tmp;
 
 //int i = 0;
@@ -57,7 +58,9 @@ void MainWindow::paint_on_screen()
 
 //     QPainter painter;
      //QPainter painter_on_image;
-
+    if(firstLoad == false)
+        image.load("Tmp.png");
+    else firstLoad = false;
 //    painter.begin(this);
 
     QImage nimage = image.scaled(width(),height(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
@@ -69,7 +72,8 @@ void MainWindow::paint_on_screen()
     pen.setColor(color_now);
     painter.setPen(pen);
 //    painter_on_image.setPen(pen);
-
+if(isDrawing)
+{
     switch (state) {
     case PAINT_LINE :
 //        if(isDrawing)
@@ -148,8 +152,11 @@ void MainWindow::paint_on_screen()
     default:
         break;
     }
+    }
 //    paint_save(default_save_file_path);
+
     painter1.drawImage(offset,nimage);
+    nimage.save("Tmp.png");//画一下保存一下，再重新load图片
     painter.end();
 
 
@@ -175,6 +182,7 @@ void MainWindow::on_open_image_dialog_clicked()
     image_path = QFileDialog::getOpenFileName(this,"file dialog",FILE_DEFAULT_PATH,"image file(* png * jpg)");
      qDebug()<<"file name is : "<<image_path<<endl;
     image.load(image_path);
+    firstLoad = true;
     update();
 }
 
@@ -194,11 +202,13 @@ void MainWindow::on_save_a_new_clicked()
 
 void MainWindow::on_color_select_clicked()
 {
+    isDrawing = false;
     QColorDialog color_dia(Qt::red,this);
       color_dia.setOption(QColorDialog::ShowAlphaChannel);
       color_dia.exec();
       color_now = color_dia.currentColor();
       qDebug()<<"current color is "<<color_now<<endl;
+
 }
 
 void MainWindow::on_font_select_clicked()
@@ -249,12 +259,15 @@ switch(state)
         case 1:
             first_point = event->pos();
              qDebug()<<"get first point " <<second_point<<endl;
+             isDrawing = true;
             break;
         case 2:
+            isDrawing = true;
             second_point = event->pos();
             qDebug()<<"get second point " <<second_point<<endl;
             break;
         case 3:
+            isDrawing = true;
             third_point = event->pos();
             Tri[0] = first_point;
             Tri[1] = second_point;
@@ -269,6 +282,7 @@ switch(state)
     break;
 
 case PAINT_TEXT:
+    isDrawing = true;
     first_point=event->pos();
     qDebug()<<"get first point " <<first_point<<endl;
     update();
@@ -283,6 +297,7 @@ case PAINT_TEXT:
 default:
         if(hasMouseTracking())
         {
+            isDrawing = true;
             setMouseTracking(false);
             second_point=event->pos();
             qDebug()<<"get second point " <<second_point<<endl;
@@ -292,6 +307,7 @@ default:
         }
         else
         {
+            isDrawing = true;
             first_point=event->pos();
             qDebug()<<"get first point " <<first_point<<endl;
             setMouseTracking(true);
@@ -339,6 +355,7 @@ void MainWindow::on_draw_line_button_clicked()
 
     state=PAINT_LINE;
     setMouseTracking(false);
+    isDrawing = false;//避免一按键就画
     //update(); //我改的
 }
 
@@ -381,16 +398,20 @@ void MainWindow::on_draw_polygon_button_clicked()
 
     state=PAINT_POLYGON;//画多边形状态
     state1 = 1;//开始算第一次点
+    isDrawing = false;//避免一按键就画
+
 }
 
 void MainWindow::on_draw_ellipse_button_clicked()
 {
     state = PAINT_ELLIPSE;
     setMouseTracking(false);
+    isDrawing = false;//避免一按键就画
 }
 
 void MainWindow::on_draw_rectangle_button_clicked()
 {
     state = PAINT_RECTANGLE;
     setMouseTracking(false);
+    isDrawing = false;//避免一按键就画
 }
