@@ -37,6 +37,8 @@ public:
     QPushButton *draw_polygon_button;
     QPushButton *draw_ellipse_button;
     QPushButton *draw_rectangle_button;
+    QPushButton *undo_button;
+    QPushButton *redo_button;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -51,34 +53,42 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         open_image_dialog = new QPushButton(centralWidget);
         open_image_dialog->setObjectName(QStringLiteral("open_image_dialog"));
-        open_image_dialog->setGeometry(QRect(500, 100, 113, 32));
+        open_image_dialog->setGeometry(QRect(510, 10, 113, 32));
         save = new QPushButton(centralWidget);
         save->setObjectName(QStringLiteral("save"));
-        save->setGeometry(QRect(500, 130, 113, 32));
+        save->setGeometry(QRect(510, 40, 113, 32));
         save_a_new = new QPushButton(centralWidget);
         save_a_new->setObjectName(QStringLiteral("save_a_new"));
-        save_a_new->setGeometry(QRect(500, 160, 113, 32));
+        save_a_new->setGeometry(QRect(510, 70, 113, 32));
         color_select = new QPushButton(centralWidget);
         color_select->setObjectName(QStringLiteral("color_select"));
-        color_select->setGeometry(QRect(500, 190, 113, 32));
+        color_select->setGeometry(QRect(510, 100, 113, 32));
         font_select = new QPushButton(centralWidget);
         font_select->setObjectName(QStringLiteral("font_select"));
-        font_select->setGeometry(QRect(500, 220, 113, 32));
+        font_select->setGeometry(QRect(510, 130, 113, 32));
         draw_line_button = new QPushButton(centralWidget);
         draw_line_button->setObjectName(QStringLiteral("draw_line_button"));
-        draw_line_button->setGeometry(QRect(500, 260, 113, 32));
+        draw_line_button->setGeometry(QRect(510, 160, 113, 32));
         addtextbutton = new QPushButton(centralWidget);
         addtextbutton->setObjectName(QStringLiteral("addtextbutton"));
-        addtextbutton->setGeometry(QRect(500, 410, 113, 32));
+        addtextbutton->setGeometry(QRect(510, 280, 113, 32));
         draw_polygon_button = new QPushButton(centralWidget);
         draw_polygon_button->setObjectName(QStringLiteral("draw_polygon_button"));
-        draw_polygon_button->setGeometry(QRect(500, 300, 113, 32));
+        draw_polygon_button->setEnabled(true);
+        draw_polygon_button->setGeometry(QRect(510, 190, 113, 32));
+        draw_polygon_button->setContextMenuPolicy(Qt::DefaultContextMenu);
         draw_ellipse_button = new QPushButton(centralWidget);
         draw_ellipse_button->setObjectName(QStringLiteral("draw_ellipse_button"));
-        draw_ellipse_button->setGeometry(QRect(500, 340, 113, 32));
+        draw_ellipse_button->setGeometry(QRect(510, 220, 113, 32));
         draw_rectangle_button = new QPushButton(centralWidget);
         draw_rectangle_button->setObjectName(QStringLiteral("draw_rectangle_button"));
-        draw_rectangle_button->setGeometry(QRect(500, 370, 113, 32));
+        draw_rectangle_button->setGeometry(QRect(510, 250, 113, 32));
+        undo_button = new QPushButton(centralWidget);
+        undo_button->setObjectName(QStringLiteral("undo_button"));
+        undo_button->setGeometry(QRect(510, 310, 113, 32));
+        redo_button = new QPushButton(centralWidget);
+        redo_button->setObjectName(QStringLiteral("redo_button"));
+        redo_button->setGeometry(QRect(510, 340, 113, 32));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -92,9 +102,9 @@ public:
         MainWindow->setStatusBar(statusBar);
 
         retranslateUi(MainWindow);
-        QObject::connect(draw_polygon_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
-        QObject::connect(draw_ellipse_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
         QObject::connect(draw_rectangle_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
+        QObject::connect(draw_ellipse_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
+        QObject::connect(draw_polygon_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -112,6 +122,8 @@ public:
         draw_polygon_button->setText(QApplication::translate("MainWindow", "draw triangle", 0));
         draw_ellipse_button->setText(QApplication::translate("MainWindow", "draw ellipse", 0));
         draw_rectangle_button->setText(QApplication::translate("MainWindow", "draw rectangle", 0));
+        undo_button->setText(QApplication::translate("MainWindow", "undo", 0));
+        redo_button->setText(QApplication::translate("MainWindow", "redo", 0));
     } // retranslateUi
 
 };

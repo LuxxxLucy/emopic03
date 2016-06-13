@@ -8,6 +8,9 @@
 #define PAINT_POLYGON 3
 #define PAINT_ELLIPSE 4
 #define PAINT_RECTANGLE 5
+#define NORMAL 1
+#define UNDO 2
+#define REDO 3
 
 class QTime;
 namespace Ui {
@@ -31,6 +34,9 @@ private:
 
     int state;
     int state1;
+    int state2;
+
+
 
     QPointF first_point,second_point,third_point;
 protected:
@@ -49,6 +55,8 @@ private slots:
     void on_draw_polygon_button_clicked();
     void on_draw_ellipse_button_clicked();
     void on_draw_rectangle_button_clicked();
+    void on_undo_button_clicked();
+    void on_redo_button_clicked();
 };
 
 #endif // MAINWINDOW_H
