@@ -13,7 +13,6 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QComboBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
@@ -38,14 +37,14 @@ public:
     QAction *actionSelect_brush_color;
     QAction *actionUse_brush;
     QAction *actionDon_t_use_brush;
+    QAction *actionSet_pen_width;
+    QAction *actionSet_brush_style;
     QWidget *centralWidget;
     QPushButton *draw_line_button;
     QPushButton *addtextbutton;
     QPushButton *draw_polygon_button;
     QPushButton *draw_ellipse_button;
     QPushButton *draw_rectangle_button;
-    QComboBox *brushStyle;
-    QPushButton *larger_button;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuEdit;
@@ -79,6 +78,10 @@ public:
         actionUse_brush->setObjectName(QStringLiteral("actionUse_brush"));
         actionDon_t_use_brush = new QAction(MainWindow);
         actionDon_t_use_brush->setObjectName(QStringLiteral("actionDon_t_use_brush"));
+        actionSet_pen_width = new QAction(MainWindow);
+        actionSet_pen_width->setObjectName(QStringLiteral("actionSet_pen_width"));
+        actionSet_brush_style = new QAction(MainWindow);
+        actionSet_brush_style->setObjectName(QStringLiteral("actionSet_brush_style"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         draw_line_button = new QPushButton(centralWidget);
@@ -98,12 +101,6 @@ public:
         draw_rectangle_button = new QPushButton(centralWidget);
         draw_rectangle_button->setObjectName(QStringLiteral("draw_rectangle_button"));
         draw_rectangle_button->setGeometry(QRect(510, 250, 113, 32));
-        brushStyle = new QComboBox(centralWidget);
-        brushStyle->setObjectName(QStringLiteral("brushStyle"));
-        brushStyle->setGeometry(QRect(510, 320, 104, 26));
-        larger_button = new QPushButton(centralWidget);
-        larger_button->setObjectName(QStringLiteral("larger_button"));
-        larger_button->setGeometry(QRect(500, 110, 113, 32));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -129,7 +126,9 @@ public:
         menuEdit->addAction(actionRedo);
         menuEdit->addSeparator();
         menuEdit->addAction(actionSelect_color);
+        menuEdit->addAction(actionSet_pen_width);
         menuEdit->addAction(actionSelect_brush_color);
+        menuEdit->addAction(actionSet_brush_style);
         menuEdit->addAction(actionSelect_font);
 
         retranslateUi(MainWindow);
@@ -145,17 +144,18 @@ public:
         actionSave_as->setText(QApplication::translate("MainWindow", "Save as", 0));
         actionUndo->setText(QApplication::translate("MainWindow", "Undo", 0));
         actionRedo->setText(QApplication::translate("MainWindow", "Redo", 0));
-        actionSelect_color->setText(QApplication::translate("MainWindow", "Select pen color", 0));
-        actionSelect_font->setText(QApplication::translate("MainWindow", "Select font", 0));
-        actionSelect_brush_color->setText(QApplication::translate("MainWindow", "Select brush color", 0));
+        actionSelect_color->setText(QApplication::translate("MainWindow", "Set pen color", 0));
+        actionSelect_font->setText(QApplication::translate("MainWindow", "Set font", 0));
+        actionSelect_brush_color->setText(QApplication::translate("MainWindow", "Set brush color", 0));
         actionUse_brush->setText(QApplication::translate("MainWindow", "Use brush", 0));
         actionDon_t_use_brush->setText(QApplication::translate("MainWindow", "Don't use brush", 0));
+        actionSet_pen_width->setText(QApplication::translate("MainWindow", "Set pen width", 0));
+        actionSet_brush_style->setText(QApplication::translate("MainWindow", "Set brush style", 0));
         draw_line_button->setText(QApplication::translate("MainWindow", "draw one line", 0));
         addtextbutton->setText(QApplication::translate("MainWindow", "add text", 0));
         draw_polygon_button->setText(QApplication::translate("MainWindow", "draw triangle", 0));
         draw_ellipse_button->setText(QApplication::translate("MainWindow", "draw ellipse", 0));
         draw_rectangle_button->setText(QApplication::translate("MainWindow", "draw rectangle", 0));
-        larger_button->setText(QApplication::translate("MainWindow", "larger", 0));
         menuFile->setTitle(QApplication::translate("MainWindow", "File(F)", 0));
         menuEdit->setTitle(QApplication::translate("MainWindow", "Edit(E)", 0));
     } // retranslateUi

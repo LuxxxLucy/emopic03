@@ -72,6 +72,8 @@ private slots:
     void on_actionSelect_brush_color_triggered();
     void on_actionUse_brush_triggered();
     void on_actionDon_t_use_brush_triggered();
+    void on_actionSet_pen_width_triggered();
+    void on_actionSet_brush_style_triggered();
 };
 
 #endif // MAINWINDOW_H

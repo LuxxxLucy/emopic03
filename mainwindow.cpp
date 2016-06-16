@@ -6,11 +6,14 @@
 #include <QFont>
 #include <QTimer>
 #include <QDebug>
+#include <QErrorMessage>
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QFontDialog>
 #include <QInputDialog>
 #include <QMouseEvent>
+#include <QStringList>
+#include <QString>
 
 #define FILE_DEFAULT_PATH "/Users/lucy/Desktop/"
 
@@ -30,8 +33,8 @@ bool firstLoad;
 bool isChanged;
 bool RightClick;//是不是鼠标右键
 //bool stateChanged = false;
-QImage Tmp;
 int now = 1, undo_steps = 0,redo_steps = 0;//steps是已经撤销的步数
+
 
 //int i = 0;
 //int state1;//用于画多边形
@@ -244,54 +247,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
     }
 }
 
-//void MainWindow::on_open_image_dialog_clicked()
-//{
-//    image_path = QFileDialog::getOpenFileName(this,"file dialog",FILE_DEFAULT_PATH,"image file(* png * jpg)");
-//    qDebug()<<"file name is : "<<image_path<<endl;
-//    image.load(image_path);
-//    firstLoad = true;
-//    update();
-//}
 
-//void MainWindow::on_save_clicked()
-//{
-//    paint_save(default_save_file_path);
-//    qDebug()<<"default save in "<<default_save_file_path<<endl;
-//}
-
-
-//void MainWindow::on_save_a_new_clicked()
-//{
-//    QString new_save_path = QFileDialog::getSaveFileName(this,"file dialog",FILE_DEFAULT_PATH,"image file(* png * jpg)");
-//    qDebug()<<"file name is : "<<new_save_path<<endl;
-//    paint_save(new_save_path);
-//}
-
-//void MainWindow::on_color_select_clicked()
-//{
-//    isDrawing = false;
-//    QColorDialog color_dia(Qt::red,this);
-//    color_dia.setOption(QColorDialog::ShowAlphaChannel);
-//    color_dia.exec();
-//    color_now = color_dia.currentColor();
-//    qDebug()<<"current color is "<<color_now<<endl;
-
-//}
-
-//void MainWindow::on_font_select_clicked()
-//{
-//    bool OK;
-//    font_now = QFontDialog::getFont(&OK,this);
-//    if(OK)
-//    {
-//        qDebug()<<"current font is "<< font_now <<endl;
-//    }
-//    else
-//    {
-//        qDebug()<<"no font select!!!"<< endl;
-//    }
-
-//}
 
 
 void MainWindow::mousePressEvent(QMouseEvent* event)
@@ -398,7 +354,7 @@ void MainWindow::on_addtextbutton_clicked()
 
     bool OK2;
     // to get a int
-    point_size  = QInputDialog::getInt(this,"tpye in the size of font!",
+    int point_size  = QInputDialog::getInt(this,"type in the size of font!",
                                        "range from -1000 ~ 1000",
                                        1,
                                        -1000,
@@ -436,7 +392,12 @@ void MainWindow::on_actionRedo_triggered()
 {
     isChanged = false;
     if(redo_steps == 0) //不能恢复了
+    {
         qDebug()<<"cannot redo" <<endl;
+        QErrorMessage errbox(this);
+        errbox.setWindowTitle(tr("error"));
+        errbox.showMessage(tr("Cannot redo!"));
+    }
     else
     {
         if(undo_steps < 4)
@@ -452,7 +413,12 @@ void MainWindow::on_actionUndo_triggered()
 {
     isChanged = false;
     if(undo_steps == 0)
+    {
         qDebug()<<"cannot undo" <<endl;
+        QErrorMessage errbox(this);
+        errbox.setWindowTitle(tr("error"));
+        errbox.showMessage(tr("Cannot undo!"));
+    }
     else
     {
         undo_steps--;
@@ -535,8 +501,65 @@ void MainWindow::on_actionDon_t_use_brush_triggered()
     qDebug()<<"don't use brush"<<endl;
 }
 
-//void MainWindow::on_larger_button_clicked()
-//{
-//    state = LARGER;
-//    update();
-//}
+
+
+void MainWindow::on_actionSet_pen_width_triggered()
+{
+    bool OK;
+    int width  = QInputDialog::getInt(this,"Type in the width of pen!",
+                                       "Please type in the width of pen",
+                                       1,
+                                       1,
+                                       1000,
+                                       10,
+                                       &OK);
+    if(OK) qDebug() << "pen width is" << width << endl;
+    pen.setWidth(width);
+}
+
+void MainWindow::on_actionSet_brush_style_triggered()
+{
+    QStringList list;
+    list <<tr("NoBrush")<< tr("SolidPattern") <<tr("Dense1Pattern") <<tr("Dense2Pattern")<<tr("Dense3Pattern")
+         <<tr("Dense4Pattern")<<tr("Dense5Pattern")<<tr("Dense6Pattern")<<tr("Dense7Pattern")<<tr("HorPattern")
+           <<tr("VerPattern")<<tr("CrossPattern")<<tr("BDiagPattern")<<tr("FDiagPattern")<<tr("DiagCrossPattern");
+    bool ok;
+    QString style = QInputDialog::getItem(this,tr("Style"),  tr("Please choose a style."),list,0,false,&ok);
+    std::string s = style.toStdString();
+    if (ok)
+    {
+        if(0 == s.compare("NoBrush"))
+            brush.setStyle(Qt::NoBrush);
+        if(0 == s.compare("SolidPattern"))
+            brush.setStyle(Qt::SolidPattern);
+        if(0 == s.compare("Dense1Pattern"))
+            brush.setStyle(Qt::Dense1Pattern);
+        if(0 == s.compare("Dense2Pattern"))
+            brush.setStyle(Qt::Dense2Pattern);
+        if(0 == s.compare("Dense3Pattern"))
+            brush.setStyle(Qt::Dense3Pattern);
+        if(0 == s.compare("Dense4Pattern"))
+            brush.setStyle(Qt::Dense4Pattern);
+        if(0 == s.compare("Dense5Pattern"))
+            brush.setStyle(Qt::Dense5Pattern);
+        if(0 == s.compare("Dense6Pattern"))
+            brush.setStyle(Qt::Dense6Pattern);
+        if(0 == s.compare("Dense7Pattern"))
+            brush.setStyle(Qt::Dense7Pattern);
+        if(0 == s.compare("HorPattern"))
+            brush.setStyle(Qt::HorPattern);
+        if(0 == s.compare("VerPattern"))
+            brush.setStyle(Qt::VerPattern);
+        if(0 == s.compare("CrossPattern"))
+            brush.setStyle(Qt::CrossPattern);
+        if(0 == s.compare("BDiagPattern"))
+            brush.setStyle(Qt::BDiagPattern);
+        if(0 == s.compare("FDiagPattern"))
+            brush.setStyle(Qt::FDiagPattern);
+        if(0 == s.compare("DiagCrossPattern"))
+            brush.setStyle(Qt::DiagCrossPattern);
+
+//        qDebug() << "style is "<<s<<endl;
+    }
+
+}

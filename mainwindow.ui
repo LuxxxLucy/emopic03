@@ -91,16 +91,6 @@
      <string>draw rectangle</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="brushStyle">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>320</y>
-      <width>104</width>
-      <height>26</height>
-     </rect>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -127,7 +117,9 @@
     <addaction name="actionRedo"/>
     <addaction name="separator"/>
     <addaction name="actionSelect_color"/>
+    <addaction name="actionSet_pen_width"/>
     <addaction name="actionSelect_brush_color"/>
+    <addaction name="actionSet_brush_style"/>
     <addaction name="actionSelect_font"/>
    </widget>
    <addaction name="menuFile"/>
@@ -169,17 +161,17 @@
   </action>
   <action name="actionSelect_color">
    <property name="text">
-    <string>Select pen color</string>
+    <string>Set pen color</string>
    </property>
   </action>
   <action name="actionSelect_font">
    <property name="text">
-    <string>Select font</string>
+    <string>Set font</string>
    </property>
   </action>
   <action name="actionSelect_brush_color">
    <property name="text">
-    <string>Select brush color</string>
+    <string>Set brush color</string>
    </property>
   </action>
   <action name="actionUse_brush">
@@ -190,6 +182,16 @@
   <action name="actionDon_t_use_brush">
    <property name="text">
     <string>Don't use brush</string>
+   </property>
+  </action>
+  <action name="actionSet_pen_width">
+   <property name="text">
+    <string>Set pen width</string>
+   </property>
+  </action>
+  <action name="actionSet_brush_style">
+   <property name="text">
+    <string>Set brush style</string>
    </property>
   </action>
  </widget>
