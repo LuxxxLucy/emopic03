@@ -1,6 +1,5 @@
 #ifndef CAMRADIALOG_H
 #define CAMRADIALOG_H
-
 #include <QDialog>
 
 namespace Ui {

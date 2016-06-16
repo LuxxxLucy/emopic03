@@ -13,8 +13,10 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
@@ -26,20 +28,27 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *actionOpen;
+    QAction *actionSave;
+    QAction *actionSave_as;
+    QAction *actionUndo;
+    QAction *actionRedo;
+    QAction *actionSelect_color;
+    QAction *actionSelect_font;
+    QAction *actionSelect_brush_color;
+    QAction *actionUse_brush;
+    QAction *actionDon_t_use_brush;
     QWidget *centralWidget;
-    QPushButton *open_image_dialog;
-    QPushButton *save;
-    QPushButton *save_a_new;
-    QPushButton *color_select;
-    QPushButton *font_select;
     QPushButton *draw_line_button;
     QPushButton *addtextbutton;
     QPushButton *draw_polygon_button;
     QPushButton *draw_ellipse_button;
     QPushButton *draw_rectangle_button;
-    QPushButton *undo_button;
-    QPushButton *redo_button;
+    QComboBox *brushStyle;
+    QPushButton *larger_button;
     QMenuBar *menuBar;
+    QMenu *menuFile;
+    QMenu *menuEdit;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -49,23 +58,29 @@ public:
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->setEnabled(true);
         MainWindow->resize(656, 502);
+        MainWindow->setContextMenuPolicy(Qt::NoContextMenu);
+        actionOpen = new QAction(MainWindow);
+        actionOpen->setObjectName(QStringLiteral("actionOpen"));
+        actionSave = new QAction(MainWindow);
+        actionSave->setObjectName(QStringLiteral("actionSave"));
+        actionSave_as = new QAction(MainWindow);
+        actionSave_as->setObjectName(QStringLiteral("actionSave_as"));
+        actionUndo = new QAction(MainWindow);
+        actionUndo->setObjectName(QStringLiteral("actionUndo"));
+        actionRedo = new QAction(MainWindow);
+        actionRedo->setObjectName(QStringLiteral("actionRedo"));
+        actionSelect_color = new QAction(MainWindow);
+        actionSelect_color->setObjectName(QStringLiteral("actionSelect_color"));
+        actionSelect_font = new QAction(MainWindow);
+        actionSelect_font->setObjectName(QStringLiteral("actionSelect_font"));
+        actionSelect_brush_color = new QAction(MainWindow);
+        actionSelect_brush_color->setObjectName(QStringLiteral("actionSelect_brush_color"));
+        actionUse_brush = new QAction(MainWindow);
+        actionUse_brush->setObjectName(QStringLiteral("actionUse_brush"));
+        actionDon_t_use_brush = new QAction(MainWindow);
+        actionDon_t_use_brush->setObjectName(QStringLiteral("actionDon_t_use_brush"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        open_image_dialog = new QPushButton(centralWidget);
-        open_image_dialog->setObjectName(QStringLiteral("open_image_dialog"));
-        open_image_dialog->setGeometry(QRect(510, 10, 113, 32));
-        save = new QPushButton(centralWidget);
-        save->setObjectName(QStringLiteral("save"));
-        save->setGeometry(QRect(510, 40, 113, 32));
-        save_a_new = new QPushButton(centralWidget);
-        save_a_new->setObjectName(QStringLiteral("save_a_new"));
-        save_a_new->setGeometry(QRect(510, 70, 113, 32));
-        color_select = new QPushButton(centralWidget);
-        color_select->setObjectName(QStringLiteral("color_select"));
-        color_select->setGeometry(QRect(510, 100, 113, 32));
-        font_select = new QPushButton(centralWidget);
-        font_select->setObjectName(QStringLiteral("font_select"));
-        font_select->setGeometry(QRect(510, 130, 113, 32));
         draw_line_button = new QPushButton(centralWidget);
         draw_line_button->setObjectName(QStringLiteral("draw_line_button"));
         draw_line_button->setGeometry(QRect(510, 160, 113, 32));
@@ -83,16 +98,20 @@ public:
         draw_rectangle_button = new QPushButton(centralWidget);
         draw_rectangle_button->setObjectName(QStringLiteral("draw_rectangle_button"));
         draw_rectangle_button->setGeometry(QRect(510, 250, 113, 32));
-        undo_button = new QPushButton(centralWidget);
-        undo_button->setObjectName(QStringLiteral("undo_button"));
-        undo_button->setGeometry(QRect(510, 310, 113, 32));
-        redo_button = new QPushButton(centralWidget);
-        redo_button->setObjectName(QStringLiteral("redo_button"));
-        redo_button->setGeometry(QRect(510, 340, 113, 32));
+        brushStyle = new QComboBox(centralWidget);
+        brushStyle->setObjectName(QStringLiteral("brushStyle"));
+        brushStyle->setGeometry(QRect(510, 320, 104, 26));
+        larger_button = new QPushButton(centralWidget);
+        larger_button->setObjectName(QStringLiteral("larger_button"));
+        larger_button->setGeometry(QRect(500, 110, 113, 32));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 656, 22));
+        menuFile = new QMenu(menuBar);
+        menuFile->setObjectName(QStringLiteral("menuFile"));
+        menuEdit = new QMenu(menuBar);
+        menuEdit->setObjectName(QStringLiteral("menuEdit"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -101,10 +120,19 @@ public:
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
 
+        menuBar->addAction(menuFile->menuAction());
+        menuBar->addAction(menuEdit->menuAction());
+        menuFile->addAction(actionOpen);
+        menuFile->addAction(actionSave);
+        menuFile->addAction(actionSave_as);
+        menuEdit->addAction(actionUndo);
+        menuEdit->addAction(actionRedo);
+        menuEdit->addSeparator();
+        menuEdit->addAction(actionSelect_color);
+        menuEdit->addAction(actionSelect_brush_color);
+        menuEdit->addAction(actionSelect_font);
+
         retranslateUi(MainWindow);
-        QObject::connect(draw_rectangle_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
-        QObject::connect(draw_ellipse_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
-        QObject::connect(draw_polygon_button, SIGNAL(clicked()), MainWindow, SLOT(update()));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -112,18 +140,24 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
-        open_image_dialog->setText(QApplication::translate("MainWindow", "open image", 0));
-        save->setText(QApplication::translate("MainWindow", "save ", 0));
-        save_a_new->setText(QApplication::translate("MainWindow", "save as", 0));
-        color_select->setText(QApplication::translate("MainWindow", "select color", 0));
-        font_select->setText(QApplication::translate("MainWindow", "select font", 0));
+        actionOpen->setText(QApplication::translate("MainWindow", "Open image", 0));
+        actionSave->setText(QApplication::translate("MainWindow", "Save", 0));
+        actionSave_as->setText(QApplication::translate("MainWindow", "Save as", 0));
+        actionUndo->setText(QApplication::translate("MainWindow", "Undo", 0));
+        actionRedo->setText(QApplication::translate("MainWindow", "Redo", 0));
+        actionSelect_color->setText(QApplication::translate("MainWindow", "Select pen color", 0));
+        actionSelect_font->setText(QApplication::translate("MainWindow", "Select font", 0));
+        actionSelect_brush_color->setText(QApplication::translate("MainWindow", "Select brush color", 0));
+        actionUse_brush->setText(QApplication::translate("MainWindow", "Use brush", 0));
+        actionDon_t_use_brush->setText(QApplication::translate("MainWindow", "Don't use brush", 0));
         draw_line_button->setText(QApplication::translate("MainWindow", "draw one line", 0));
         addtextbutton->setText(QApplication::translate("MainWindow", "add text", 0));
         draw_polygon_button->setText(QApplication::translate("MainWindow", "draw triangle", 0));
         draw_ellipse_button->setText(QApplication::translate("MainWindow", "draw ellipse", 0));
         draw_rectangle_button->setText(QApplication::translate("MainWindow", "draw rectangle", 0));
-        undo_button->setText(QApplication::translate("MainWindow", "undo", 0));
-        redo_button->setText(QApplication::translate("MainWindow", "redo", 0));
+        larger_button->setText(QApplication::translate("MainWindow", "larger", 0));
+        menuFile->setTitle(QApplication::translate("MainWindow", "File(F)", 0));
+        menuEdit->setTitle(QApplication::translate("MainWindow", "Edit(E)", 0));
     } // retranslateUi
 
 };

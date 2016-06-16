@@ -19,13 +19,16 @@ QString image_path=NULL;
 QString default_save_file_path=NULL;
 QString target_string;
 QFont font_now;
-QColor color_now;
+QColor color_now, color_brush;
 int point_size;
 QPointF Tri[3];
 QPen pen;
+QBrush brush(Qt::SolidPattern);
+bool useBrush;
 bool isDrawing;
 bool firstLoad;
 bool isChanged;
+bool RightClick;//是不是鼠标右键
 //bool stateChanged = false;
 QImage Tmp;
 int now = 1, undo_steps = 0,redo_steps = 0;//steps是已经撤销的步数
@@ -44,10 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     isDrawing = false;
 
-    //    QTimer * timer = new QTimer(this);
 
-    //    connect(timer,SIGNAL(timeout()),this,SLOT(update()));
-    //     timer->start(1000);
 }
 
 MainWindow::~MainWindow()
@@ -58,9 +58,6 @@ MainWindow::~MainWindow()
 void MainWindow::paint_on_screen()
 {
     QPoint offset(20,20);
-
-    //     QPainter painter;
-    //QPainter painter_on_image;
 
     if(firstLoad == false )  //不是第一次加载
     {
@@ -97,13 +94,12 @@ void MainWindow::paint_on_screen()
         undo_steps = redo_steps = 0;
         qDebug()<<"first load"<<endl;
     }
-    //    painter.begin(this);
 
     QImage nimage = image.scaled(width(),height(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
     QPainter painter1(this);
     painter1.drawImage(offset,nimage);
-    //    QPainter painter_on_image(&nimage);
     QPainter painter(&nimage);
+
     if(firstLoad)
     {
         nimage.save("Tmp1.png");
@@ -111,34 +107,20 @@ void MainWindow::paint_on_screen()
         qDebug()<<"save first load Tmp1.png"<<endl;
     }
 
-    pen.setColor(color_now);
+//    pen.setColor(color_now);
+
     painter.setPen(pen);
-    //    painter_on_image.setPen(pen);
+//    if(true == useBrush)
+        painter.setBrush(brush);
+
     isChanged = false;
     if(isDrawing)//画画
     {
 
         switch (state) {
         case PAINT_LINE :
-            //        if(isDrawing)
-            //        {
-            //            Tmp = nimage;
-            //            QPainter pp(&Tmp);
-            //            pp.drawLine(first_point,second_point);
-            //            painter.drawImage(offset, Tmp);
-            //        }else {
-            //            QPainter pp(&nimage);
-            //            pp.drawLine(first_point,second_point);
-            //            painter.drawImage(offset,nimage);
-            //        }
             painter.drawLine(first_point,second_point);
             qDebug()<<"draw line"<<endl;
-
-            //        painter_on_image.drawLine((first_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                                  (first_point.y()-offset.y())*(1.0*image.height()/height()),
-            //                                  (second_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                                  (second_point.y()-offset.y())*(1.0*image.height()/height())
-            //                                  );
             state=0;
             isChanged = true;
             break;
@@ -154,54 +136,48 @@ void MainWindow::paint_on_screen()
             painter.setPen(Qt::gray);
             painter.drawText(first_point,target_string);
             qDebug()<<"draw text"<<endl;
-
-            //            painter_on_image.setFont(font_now);
-            //            painter_on_image.setPen(Qt::gray);
-            //           painter_on_image.drawText((first_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                                      (first_point.y()-offset.y())*(1.0*image.height()/height()),
-            //                                      target_string);
             state=0;
             isChanged = true;
             break;
         case PAINT_POLYGON:
 
-            //        QPointF Tri[3] = {first_point, second_point, third_point};
-            //        QPointF Tri2[3] = {((first_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                           (first_point.y()-offset.y())*(1.0*image.height()/height())
-            //                        ),(second_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                           (second_point.y()-offset.y())*(1.0*image.height()/height()),(third_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                           (third_point.y()-offset.y())*(1.0*image.height()/height())};
             painter.drawPolygon(Tri,3);
             qDebug()<<"draw triangle"<<endl;
-            //        painter.drawPolygon({first_point, second_point, third_point},3);
-            //painter_on_image.drawPolygon(Tri2, 3);
-            //        painter_on_image.drawPolygon({((first_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                                      (first_point.y()-offset.y())*(1.0*image.height()/height())
-            //                                   ),(second_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                                      (second_point.y()-offset.y())*(1.0*image.height()/height()),(third_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                                      (third_point.y()-offset.y())*(1.0*image.height()/height())},3);
             isChanged = true;
             break;
         case PAINT_ELLIPSE:
+            if(false == RightClick)//左键按的
+            {
             painter.drawEllipse(first_point.x(),first_point.y(),second_point.x()-first_point.x(),second_point.y()-first_point.y());
-            //        painter_on_image.drawEllipse((first_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                                  (first_point.y()-offset.y())*(1.0*image.height()/height()),
-            //                                  (second_point.x()-first_point.x())*(1.0*image.width()/width()),
-            //                                  (second_point.y()-first_point.y())*(1.0*image.height()/height())
-            //                                  );
             qDebug()<<"draw ellipse"<<endl;
+            } else
+            {
+                painter.drawEllipse(first_point.x(),first_point.y(),MAX(second_point.x()-first_point.x(),second_point.y()-first_point.y()),MAX(second_point.x()-first_point.x(),second_point.y()-first_point.y()));
+                qDebug()<<"draw circle"<<endl;
+            }
             isChanged = true;
             break;
         case PAINT_RECTANGLE:
+            if(false == RightClick)
+            {
             painter.drawRect(first_point.x(),first_point.y(),second_point.x()-first_point.x(),second_point.y()-first_point.y());
-            //        painter_on_image.drawRect((first_point.x()-offset.x())*(1.0*image.width()/width()),
-            //                                  (first_point.y()-offset.y())*(1.0*image.height()/height()),
-            //                                  (second_point.x()-first_point.x())*(1.0*image.width()/width()),
-            //                                  (second_point.y()-first_point.y())*(1.0*image.height()/height())
-            //                                  );
             qDebug()<<"draw rectangle"<<endl;
+            } else
+            {
+                painter.drawRect(first_point.x(),first_point.y(),MAX(second_point.x()-first_point.x(),second_point.y()-first_point.y()),MAX(second_point.x()-first_point.x(),second_point.y()-first_point.y()));
+                qDebug()<<"draw square"<<endl;
+            }
             isChanged = true;
             break;
+//        case LARGER:
+//            {
+//                qreal width = pix.width();
+//                qreal height = pix.height();
+//                pix = pix.scaled(width*2,height*2,Qt::KeepAspectRatio);
+//                painter1.drawPixmap(20,20,pix);
+//            }
+//            state = 0;
+//            break;
 
         default:
             qDebug()<<"not draw"<<endl;
@@ -209,7 +185,6 @@ void MainWindow::paint_on_screen()
             break;
         }//switch
 
-        //    paint_save(default_save_file_path);
 
         painter1.drawImage(offset,nimage);//画出改变后的图
         if(isChanged == true)
@@ -241,14 +216,13 @@ void MainWindow::paint_on_screen()
                 qDebug()<<"something unexpacted happened"<<endl;
                 break;
             }
-        redo_steps = 0; //动过了，不能redo了
-        if(undo_steps <4)
-        undo_steps++;
+            redo_steps = 0; //动过了，不能redo了
+            if(undo_steps <4)
+                undo_steps++;
         }
         qDebug()<<"undo "<< undo_steps <<"redo "<<redo_steps << endl;
     }//if (isDrawing)
 
-    //    nimage.save("Tmp.png");//画一下保存一下，再重新load图片
     painter.end();
     isChanged = false;
     isDrawing = false;
@@ -268,85 +242,71 @@ void MainWindow::paintEvent(QPaintEvent *event)
         default_save_file_path=image_path;
         paint_on_screen();
     }
-    //QPainter(this).drawLine(first_point, second_point );
 }
 
-void MainWindow::on_open_image_dialog_clicked()
-{
-    image_path = QFileDialog::getOpenFileName(this,"file dialog",FILE_DEFAULT_PATH,"image file(* png * jpg)");
-    qDebug()<<"file name is : "<<image_path<<endl;
-    image.load(image_path);
-    firstLoad = true;
-    update();
-}
+//void MainWindow::on_open_image_dialog_clicked()
+//{
+//    image_path = QFileDialog::getOpenFileName(this,"file dialog",FILE_DEFAULT_PATH,"image file(* png * jpg)");
+//    qDebug()<<"file name is : "<<image_path<<endl;
+//    image.load(image_path);
+//    firstLoad = true;
+//    update();
+//}
 
-void MainWindow::on_save_clicked()
-{
-    paint_save(default_save_file_path);
-    qDebug()<<"default save in "<<default_save_file_path<<endl;
-}
+//void MainWindow::on_save_clicked()
+//{
+//    paint_save(default_save_file_path);
+//    qDebug()<<"default save in "<<default_save_file_path<<endl;
+//}
 
 
-void MainWindow::on_save_a_new_clicked()
-{
-    QString new_save_path = QFileDialog::getSaveFileName(this,"file dialog",FILE_DEFAULT_PATH,"image file(* png * jpg)");
-    qDebug()<<"file name is : "<<new_save_path<<endl;
-    paint_save(new_save_path);
-}
+//void MainWindow::on_save_a_new_clicked()
+//{
+//    QString new_save_path = QFileDialog::getSaveFileName(this,"file dialog",FILE_DEFAULT_PATH,"image file(* png * jpg)");
+//    qDebug()<<"file name is : "<<new_save_path<<endl;
+//    paint_save(new_save_path);
+//}
 
-void MainWindow::on_color_select_clicked()
-{
-    isDrawing = false;
-    QColorDialog color_dia(Qt::red,this);
-    color_dia.setOption(QColorDialog::ShowAlphaChannel);
-    color_dia.exec();
-    color_now = color_dia.currentColor();
-    qDebug()<<"current color is "<<color_now<<endl;
+//void MainWindow::on_color_select_clicked()
+//{
+//    isDrawing = false;
+//    QColorDialog color_dia(Qt::red,this);
+//    color_dia.setOption(QColorDialog::ShowAlphaChannel);
+//    color_dia.exec();
+//    color_now = color_dia.currentColor();
+//    qDebug()<<"current color is "<<color_now<<endl;
 
-}
+//}
 
-void MainWindow::on_font_select_clicked()
-{
-    bool OK;
-    font_now = QFontDialog::getFont(&OK,this);
-    if(OK)
-    {
-        qDebug()<<"current font is "<< font_now <<endl;
-    }
-    else
-    {
-        qDebug()<<"no font select!!!"<< endl;
-    }
+//void MainWindow::on_font_select_clicked()
+//{
+//    bool OK;
+//    font_now = QFontDialog::getFont(&OK,this);
+//    if(OK)
+//    {
+//        qDebug()<<"current font is "<< font_now <<endl;
+//    }
+//    else
+//    {
+//        qDebug()<<"no font select!!!"<< endl;
+//    }
 
-}
+//}
 
 
 void MainWindow::mousePressEvent(QMouseEvent* event)
 {
-
-    //    if(event->button() == Qt::LeftButton)
-    //    {
-    //        switch(state)
-    //        {
-
-    //        case 0 :    point=event->pos();
-    //                    state=1;
-    //                    qDebug()<<"get first point " <<point<<endl;
-
-    //                    setMouseTracking(false);
-    //            break;
-    //            case 1: point=event->pos();
-    //            qDebug()<<"get  second point " <<point<<endl;
-    //                    state=2;
-    //            break;
-    //        case 2:break;
-    //        default:break;
-
-
-    //        }
-
     switch(state)
     {
+    if(event->button() == Qt::LeftButton)
+    {
+        RightClick = false;
+    }
+    else if(event->button() == Qt::RightButton)
+    {
+        RightClick = true;
+        qDebug()<<"right clicked"<<endl;
+    }
     case PAINT_POLYGON: //画多边形（现在就设置成三角形好了）
         switch (state1++)
         {
@@ -381,14 +341,9 @@ void MainWindow::mousePressEvent(QMouseEvent* event)
         qDebug()<<"get first point " <<first_point<<endl;
         update();
         break;
-        //case PAINT_LINE:
-        //    if(event->button()==Qt::LeftButton) //鼠标左键按下
-        //        {
-        //            first_point = event->pos();
-        //            isDrawing = true;   //正在绘图
-        //        }
-        //    break;
+
     default:
+
         if(hasMouseTracking())
         {
             isDrawing = true;
@@ -396,7 +351,6 @@ void MainWindow::mousePressEvent(QMouseEvent* event)
             second_point=event->pos();
             qDebug()<<"get second point " <<second_point<<endl;
             update();
-            //            i++;
 
         }
         else
@@ -405,63 +359,34 @@ void MainWindow::mousePressEvent(QMouseEvent* event)
             first_point=event->pos();
             qDebug()<<"get first point " <<first_point<<endl;
             setMouseTracking(true);
-            //update();
         }
         break;
 
     }
+
+
 }
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
-    //    second_point = event->pos();
-    //    update();
-    //    if(state == PAINT_LINE && event->buttons()&Qt::LeftButton)//如果鼠标左键按着的同时移动鼠标
-    //    {
-    //        second_point = event->pos();
-    //        update();
-    //    }
-    //    switch(state)
-    //    {
-    //    case PAINT_LINE:
-    //        if(event->buttons()&Qt::LeftButton) //鼠标左键按下的同时移动鼠标
-    //            {
-    //                second_point = event->pos();
-    //                update(); //进行绘制
-    //            }
-    //    }
+
 }
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-    //    if(event->button() == Qt::LeftButton)   //如果鼠标左键释放
-    //    {
-    //        second_point = event->pos();
-    //        isDrawing = false;
-    //        update();
-    //        qDebug()<<"Line drawing finished"<<endl;
-    //    }
+
 }
 
 void MainWindow::on_draw_line_button_clicked()
 {
-    //    painter->pNext = new painterNode();
-    //    painter = painter->pNext;
-
 
     state=PAINT_LINE;
     setMouseTracking(false);
     isDrawing = false;//避免一按键就画
-    //update(); //我改的
 }
 
 
 
 void MainWindow::on_addtextbutton_clicked()
 {
-
-
-    //    painter->pNext = new painterNode();
-    //    painter = painter->pNext;
-
     bool OK1;
     // to get a string
     target_string = QInputDialog::getText(this,"tpye text dialog!",
@@ -482,13 +407,10 @@ void MainWindow::on_addtextbutton_clicked()
                                        &OK2);
     if(OK2) qDebug()<<"font size is "<< point_size <<endl;
     state=PAINT_TEXT;
-    //update();
 }
 
 void MainWindow::on_draw_polygon_button_clicked()
 {
-    //    painter->pNext = new painterNode();
-    //    painter = painter->pNext;
 
     state=PAINT_POLYGON;//画多边形状态
     state1 = 1;//开始算第一次点
@@ -510,7 +432,23 @@ void MainWindow::on_draw_rectangle_button_clicked()
     isDrawing = false;//避免一按键就画
 }
 
-void MainWindow::on_undo_button_clicked()
+void MainWindow::on_actionRedo_triggered()
+{
+    isChanged = false;
+    if(redo_steps == 0) //不能恢复了
+        qDebug()<<"cannot redo" <<endl;
+    else
+    {
+        if(undo_steps < 4)
+            undo_steps++;
+        redo_steps--;
+        now++;
+        if(now == 6) now -= 5;
+        update();
+    }
+}
+
+void MainWindow::on_actionUndo_triggered()
 {
     isChanged = false;
     if(undo_steps == 0)
@@ -525,19 +463,80 @@ void MainWindow::on_undo_button_clicked()
     }
 }
 
-void MainWindow::on_redo_button_clicked()
+void MainWindow::on_actionSave_as_triggered()
 {
-    isChanged = false;
-    if(redo_steps == 0) //不能恢复了
-        qDebug()<<"cannot redo" <<endl;
+    QString new_save_path = QFileDialog::getSaveFileName(this,"file dialog",FILE_DEFAULT_PATH,"image file(* png * jpg)");
+    qDebug()<<"file name is : "<<new_save_path<<endl;
+    paint_save(new_save_path);
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    paint_save(default_save_file_path);
+    qDebug()<<"default save in "<<default_save_file_path<<endl;
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    image_path = QFileDialog::getOpenFileName(this,"file dialog",FILE_DEFAULT_PATH,"image file(* png * jpg)");
+    qDebug()<<"file name is : "<<image_path<<endl;
+    image.load(image_path);
+    firstLoad = true;
+    update();
+}
+
+void MainWindow::on_actionSelect_color_triggered()
+{
+    isDrawing = false;
+    QColorDialog color_dia(Qt::red,this);
+    color_dia.setOption(QColorDialog::ShowAlphaChannel);
+    color_dia.exec();
+    color_now = color_dia.currentColor();
+    pen.setColor(color_now);
+
+    qDebug()<<"current pen color is "<<color_now<<endl;
+}
+
+void MainWindow::on_actionSelect_font_triggered()
+{
+    bool OK;
+    font_now = QFontDialog::getFont(&OK,this);
+    if(OK)
+    {
+        qDebug()<<"current font is "<< font_now <<endl;
+    }
     else
     {
-        if(undo_steps < 4)
-        undo_steps++;
-        redo_steps--;
-        now++;
-        if(now == 6) now -= 5;
-        update();
+        qDebug()<<"no font select!!!"<< endl;
     }
 }
 
+void MainWindow::on_actionSelect_brush_color_triggered()
+{
+    isDrawing = false;
+    QColorDialog color_dia(Qt::red,this);
+    color_dia.setOption(QColorDialog::ShowAlphaChannel);
+    color_dia.exec();
+    color_brush = color_dia.currentColor();
+    brush.setColor(color_brush);
+
+    qDebug()<<"current brush color is "<<color_now<<endl;
+}
+
+void MainWindow::on_actionUse_brush_triggered()
+{
+    useBrush = true;
+    qDebug()<<"use brush"<<endl;
+}
+
+void MainWindow::on_actionDon_t_use_brush_triggered()
+{
+    useBrush = false;
+    qDebug()<<"don't use brush"<<endl;
+}
+
+//void MainWindow::on_larger_button_clicked()
+//{
+//    state = LARGER;
+//    update();
+//}
